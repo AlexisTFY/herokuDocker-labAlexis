@@ -1,17 +1,30 @@
 name: Continuos Deployment workflow
 
-on: pull_request
+on:
+  push:
+    branches:
+      - master
+
+env:
+  HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+  IMAGE_NAME: registry.heroku.com/${{ secrets.HEROKU_APP_NAME }}/web
 
 jobs:
-  ci:
+  cd:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-      - name: Install
-        run: npm ci
-      - name: Build
-        run: npm run build
-      - name: Test
-        run: npm test
+      - name: Login heroku app Docker registry
+        run: |
+          curl https://cli-assets.heroku.com/install-ubuntu.sh | sh
+          heroku container:login
+      - name: Build docker image 
+        run: docker build -t ${secrets.HEROKU_APP_NAME}}:${{github.run_id}} .
+      - name: Deployment docker image
+        run: |
+          docker tag ${secrets.HEROKU_APP_NAME}}:${{github.run_id}} registry.heroku.com/${{secrets.HEROKU_APP_NAME}}/web
+          docker push registry.heroku.com/${{secrets.HEROKU_APP_NAME}}/web
+      - name: Release
+        run: heroku container:release web -a ${{secrets.HEROKU_APP_NAME}}
       

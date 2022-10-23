@@ -54,3 +54,15 @@ Crear arichivo cd.yml en .github/workflows
                 run: npm test
         
     - - - - - 
+Creamos nueva rama, hacemos push y hacemos una pull request
+
+Una vez que esta correcta esta parte vamos a heroky y creamos una nueva app
+name: heroku-docker-labalexis
+zone: Europa
+
+Creamos token de autorización
+$ npx heroku login
+$ npx heroku authorizations:create -d heroku-docker-labalexis
+Token:       f6fac01a-0ea2-4a1c-8270-42a52e8e75b1
+Añadimos ese token en Gihub en la zona de Secrets
+Creamos otros secreto con el nombre de la app de heroku
